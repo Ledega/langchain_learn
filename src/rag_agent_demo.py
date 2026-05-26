@@ -1,7 +1,6 @@
 import os
 import bs4
 import requests
-from openai import OpenAI
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.documents import Document
@@ -26,18 +25,13 @@ embeddings = OpenAIEmbeddings(
 )
 
 def load_web_page(url, bs4_kwargs=None):
+    """抓取指定网页并将其内容转换为 LangChain Document 对象。"""
+    """bs4_kwargs (dict, optional): 传递给 BeautifulSoup 的额外字典参数（通过 **kwargs 解包）。"""
     """
-    抓取指定网页并将其内容转换为 LangChain Document 对象。
-
-    Args:
-        url (str): 要抓取的网页URL。
-        bs4_kwargs (dict, optional): 传递给 BeautifulSoup 的额外字典参数（通过 **kwargs 解包）。
-
     Returns:
         list[Document]: 包含被提取纯文本和来源元数据的 Document 对象列表。
     """
     response = requests.get(url)
-    # 确保请求成功，否则抛出异常 (如 404, 500)
     response.raise_for_status()  
     
     # 将 HTML 文本 (response.text) 转换为可以遍历和搜索的 BeautifulSoup DOM 树
